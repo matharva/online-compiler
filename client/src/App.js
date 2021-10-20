@@ -1,12 +1,24 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import stubs from "./defaultStubs";
+import moment from "moment";
 function App() {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("cpp");
   const [status, setStatus] = useState("");
   const [jobId, setJobId] = useState("");
+  const [jobDetails, setJobDetails] = useState(null);
+
+  useEffect(() => {
+    setCode(stubs[language]);
+  }, [language]);
+
+  useEffect(() => {
+    const defaultLanguage = localStorage.getItem("default-lanuguage");
+    if (defaultLanguage) setLanguage(defaultLanguage);
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -38,6 +50,7 @@ function App() {
         if (success) {
           const { status, output } = job;
           setStatus(status);
+          setJobDetails(job);
           console.log("status", status);
           if (status === "pending") return;
           setOutput(output);
@@ -64,6 +77,31 @@ function App() {
     }
   }
 
+  function setDefaultLanguage() {
+    localStorage.setItem("default-language", language);
+    console.log(`${language} was set as your default language`);
+  }
+
+  function renderTimeDetails() {
+    if (!jobDetails) return "";
+
+    let result = "";
+    let { submittedAt, completedAt, startedAt } = jobDetails;
+    submittedAt = moment(submittedAt).toString();
+    result += `Submitted At: ${submittedAt}`;
+
+    if (!completedAt || !startedAt) {
+      return result;
+    }
+    const start = moment(startedAt);
+    const end = moment(completedAt);
+    const executionTime = end.diff(start, "seconds", true);
+
+    result += `Execution time: ${executionTime}s`;
+
+    return result;
+  }
+
   return (
     <div className="App">
       <h1>Online code compiler</h1>
@@ -73,12 +111,22 @@ function App() {
           name=""
           id=""
           value={language}
-          onChange={(e) => setLanguage(e.target.value)}
+          onChange={(e) => {
+            let response = window.confirm(
+              "WARNING: Changing language will remove your code. Do you wish to proceed?"
+            );
+            if (response) {
+              setLanguage(e.target.value);
+            }
+          }}
         >
           <option value="cpp">C++</option>
           <option value="py">Python</option>
         </select>
       </div>
+      <br />
+      <button onClick={setDefaultLanguage}>Set default</button>
+      <br />
       <br />
       <textarea
         name=""
@@ -91,6 +139,7 @@ function App() {
       <br />
       <button onClick={handleSubmit}>Submit</button>
       <p>{output}</p>
+      <p>{renderTimeDetails()}</p>
       <p>{status}</p>
       <p>{jobId && `JobID: ${jobId}`}</p>
     </div>

@@ -3,8 +3,7 @@ const cors = require("cors");
 
 // File execution exports
 const { generateFile } = require("./generateFile");
-const { executePy } = require("./executePy");
-const { executeCpp } = require("./executeCpp");
+const { addJobToQueue } = require("./jobQueue");
 
 // DB Exports
 const connectDB = require("./connect");
@@ -72,34 +71,12 @@ app.post("/run", async (req, res) => {
     console.log(job);
 
     // 3. Send the jobId in the front end to confirm that the
-    // code is submitted and is executing
+    // code is submitted and is executing and add it to the job queue
     const jobId = job._id;
-    console.log(jobId);
+    addJobToQueue(jobId);
     res.status(201).json({ success: true, jobId });
-
-    // 4. Execute code in parallel
-    let output;
-    job["startedAt"] = new Date();
-    if (language === "cpp") {
-      output = await executeCpp(filePath);
-    } else {
-      output = await executePy(filePath);
-    }
-
-    // 5. Update the code status, time and output in the DB
-    job["completedAt"] = new Date();
-    job["status"] = "success";
-    job["output"] = output;
-    await job.save();
-    // console.log({ filePath, output });
-    console.log(job);
   } catch (error) {
-    // Else update the status and add the error in the DB
-    job["completedAt"] = new Date();
-    job["status"] = "error";
-    job["output"] = JSON.stringify(error);
-    await job.save();
-    console.log(job);
+    res.status(500).json({ success: false, error: JSON.stringify(error) });
   }
 });
 
