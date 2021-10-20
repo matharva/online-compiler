@@ -5,6 +5,8 @@ function App() {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("cpp");
+  const [status, setStatus] = useState("");
+  const [jobId, setJobId] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -14,10 +16,39 @@ function App() {
     };
 
     try {
+      setJobId("");
+      setOutput("");
+      setStatus("");
+
       const { data } = await axios.post("http://localhost:5000/run", payload);
       console.log(data);
+      setJobId(data.jobId);
 
       // Polling
+
+      let pollingInterval = setInterval(async () => {
+        const { data: dataRes } = await axios.get(
+          "http://localhost:5000/status",
+          { params: { id: data.jobId } }
+        );
+
+        const { success, job, error } = dataRes;
+        console.log(dataRes);
+
+        if (success) {
+          const { status, output } = job;
+          setStatus(status);
+          console.log("status", status);
+          if (status === "pending") return;
+          setOutput(output);
+          clearInterval(pollingInterval);
+        } else {
+          setStatus("Error: please retry!!");
+          clearInterval(pollingInterval);
+          console.log(error);
+          setOutput(error);
+        }
+      }, 1000);
 
       // setOutput(data.output);
       // console.log(output);
@@ -60,6 +91,8 @@ function App() {
       <br />
       <button onClick={handleSubmit}>Submit</button>
       <p>{output}</p>
+      <p>{status}</p>
+      <p>{jobId && `JobID: ${jobId}`}</p>
     </div>
   );
 }
