@@ -1,6 +1,12 @@
 const Queue = require("bull");
 
-const jobQueue = new Queue("job-queue");
+const jobQueue = new Queue("job-queue", {
+  redis: {
+    host: "backend-redis-1",
+    port: 6379,
+    password: "root",
+  },
+});
 const NUM_WORKERS = 5;
 const Job = require("./models/Jobs");
 const { executePy } = require("./executePy");
@@ -20,12 +26,12 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     // 2. Execute code in parallel
     let output;
     job["startedAt"] = new Date();
+
     if (job.language === "cpp") {
       output = await executeCpp(job.filePath);
     } else {
       output = await executePy(job.filePath);
     }
-
     // 3. Update the code status, time and output in the DB
     job["completedAt"] = new Date();
     job["status"] = "success";
@@ -50,7 +56,9 @@ jobQueue.on("failed", (error) => {
 });
 
 const addJobToQueue = async (jobId) => {
+  console.log("Adding job to the queue");
   await jobQueue.add({ id: jobId });
+  console.log("Done adding Job to the queue");
 };
 
 module.exports = { addJobToQueue };

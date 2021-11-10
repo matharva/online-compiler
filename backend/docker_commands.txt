@@ -17,6 +17,10 @@ docker-compose down -v
 
 To see the logs when you are in the detached mode:
 docker logs <name_of_the_container>
+To still be in the terminal 
+docker logs <name_of_the_container> -f
+
+
 
 To list all the networks:
 docker network ls

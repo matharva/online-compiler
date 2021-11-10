@@ -14,13 +14,15 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
+app.enable("trust proxy");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) =>
-  res.json({ data: "The app is running, lesssssgo!!!!!!!!!!!" })
-);
+app.get("/", (req, res) => {
+  res.json({ data: "The app is running, lesssssgo!!!!!!!!!!!" });
+  console.log("GET / request served");
+});
 
 app.get("/status", async (req, res) => {
   // 1. Get the job id from the query params for polling
