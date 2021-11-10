@@ -1,0 +1,63 @@
+TO START THE APP, USE COMMAND: 
+docker-compose up -d
+(-d to run in detached mode)
+
+---------------------------- To get IP Address --------------------------------
+docker inspect backend-node-app-1 (whatever the name of the container is)
+OR
+docker network inspect backend_default
+
+To force docker-compose to build the image (when you make changes to the files) 
+docker-compose up -d --build -V
+(-V to create new anonymous volumes)
+
+To close the app
+docker-compose down -v 
+(-v to delete all the volumes)
+
+To see the logs when you are in the detached mode:
+docker logs <name_of_the_container>
+
+To list all the networks:
+docker network ls
+
+Note: The custom networks provide a DNS, which means that the app_name is mapped to the IP of the same, which means if we ping app_name, we get a response
+
+
+-> To list all the docker containers
+docker ps
+
+-> To create a docker container (here node-app) from the image (here node-app-image) 
+docker run -p 5000:5000 -d --name node-app node-app-image
+
+-> To create container with volumes (### USE THIS ###)
+docker run -v ${pwd}:/app  -p 5000:5000 -d --name node-app node-app-image
+
+-> To build a new image when you make some changes to the Dockerfile
+docker build -t node-app-image .
+
+-> To delete a already running container
+docker rm ba23779f7c1a (container id, from docker ps) -f
+- To delete the container and its associated volumes:
+docker rm ba23779f7c1a (container id, from docker ps) -fv
+
+-> To get terminal access to the currently running container, 
+docker exec -it node-app bash
+
+
+
+
+-d -> detach mode 
+-p specify the port
+-v -> volumes (-v path_to_folder_on_host:path_to_folder_on_container)
+
+Docker run vs exec
+The difference between “docker run” and “docker exec” is that “docker exec” executes a command on a running container. 
+On the other hand, “docker run” creates a temporary container, executes the command in it and stops the container when it is done.
+
+Volumes
+- When used as a bind mount, the it can make share the same file between the container and the host machine, 
+so the changes reflect in both without actually creating a new container everytime 
+- To persist data even when the container is destroyed
+
+

@@ -18,6 +18,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (req, res) =>
+  res.json({ data: "The app is running, lesssssgo!!!!!!!!!!!" })
+);
+
 app.get("/status", async (req, res) => {
   // 1. Get the job id from the query params for polling
   const jobId = req.query.id;
