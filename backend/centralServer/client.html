@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Client</title>
+  </head>
+  <body>
+    Timestamp:<span id="timeStamp">24242424</span> <br />
+    Request Time:<span id="reqTime">24242424</span>ms<br />
+    <button onclick="syncTime()">Request</button>
+    <script>
+      let timestamp = document.getElementById("timeStamp");
+      let reqTime = document.getElementById("reqTime");
+
+      //   function syncTime() {
+      // console.time("timer1");
+      // setInterval(() => {
+      //   let startTime = new Date().getTime();
+      //   fetch("http://localhost:8001/getTimestamp")
+      //     .then((res) => res.json())
+      //     .then((data) => {
+      //       // let time = console.timeEnd("timer1");
+      //       let RTT = new Date().getTime() - startTime;
+      //       let currTime = data.timestamp + RTT / 2;
+      //       console.log("The data is: ", data, currTime, RTT);
+      //       timestamp.innerHTML = currTime;
+      //       reqTime.innerHTML = RTT;
+      //     });
+      // }, 2000);
+
+      //   }
+    </script>
+  </body>
+</html>

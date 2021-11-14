@@ -15,3 +15,10 @@ services:
       - PORT=5000
   redis:
     image: redis
+  central:
+    build:
+      context: ./centralServer/
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+    restart: always

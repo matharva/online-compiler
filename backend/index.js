@@ -86,6 +86,43 @@ app.post("/run", async (req, res) => {
   }
 });
 
+/////////////////////////////////////////////////////////
+////  Clock Sync Starts
+/////////////////////////////////////////////////////////
+let timestamp = new Date().getTime();
+let timeDelta = 0;
+
+app.get("/getTimestamp", (req, res) => {
+  res.json({
+    data: "The app is running, lesssssgo!!!!!!!!!!!",
+    timestamp: new Date().getTime(),
+  });
+  console.log("GET / request served");
+});
+
+app.get("/getBerleyTimestamp", (req, res) => {
+  console.log("In server 3: ", timestamp);
+  res.json({
+    timestamp: timeDelta + new Date().getTime(),
+    // ip: results["eth0"][0],
+  });
+});
+
+app.get("/sendTime", (req, res) => {
+  res.json({
+    timestamp: new Date().getTime(),
+  });
+});
+
+app.post("/sendTime", (req, res) => {
+  timeDelta = req.body.timestamp;
+  res.send("ok");
+});
+
+/////////////////////////////////////////////////////////
+////  Clock Sync Ends
+/////////////////////////////////////////////////////////
+
 // Sever Init
 const start = async () => {
   try {
