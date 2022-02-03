@@ -32,3 +32,16 @@
     transform: rotate(360deg);
   }
 }
+
+.App {
+  /* border: 2px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  /* flex-direction: vertical; */
+}
+
+h1 {
+  text-align: center;
+}

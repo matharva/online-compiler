@@ -26,6 +26,7 @@ app.get("/", (req, res) => {
 
 app.get("/status", async (req, res) => {
   // 1. Get the job id from the query params for polling
+  console.log("/status");
   const jobId = req.query.id;
 
   if (jobId === undefined) {
@@ -34,12 +35,10 @@ app.get("/status", async (req, res) => {
       .json({ success: false, error: "Missing query params" });
   }
 
-  console.log(jobId);
-
   // 2. Find the respective document
   try {
     const job = await Job.findById(jobId);
-    console.log("job is", job);
+    console.log(`Status request for: ${jobId} and status: ${job.status}`);
     if (job === undefined) {
       return res.status(400).json({
         success: false,
@@ -58,7 +57,7 @@ app.get("/status", async (req, res) => {
 
 app.post("/run", async (req, res) => {
   const { language = "cpp", code } = req.body;
-  console.log(language, code);
+  // console.log(language, code);
 
   if (code === undefined) {
     return res
@@ -70,11 +69,11 @@ app.post("/run", async (req, res) => {
   try {
     // 1. Create a file where the code will be stored
     const filePath = await generateFile(language, code);
-    console.log("File Path: ", filePath);
+    // console.log("File Path: ", filePath);
 
     // 2. Store the filepath in the db
     job = await Job.create({ language, filePath });
-    console.log(job);
+    console.log("Job created for: ", job._id);
 
     // 3. Send the jobId in the front end to confirm that the
     // code is submitted and is executing and add it to the job queue
@@ -100,7 +99,7 @@ app.get("/getTimestamp", (req, res) => {
   console.log("GET / request served");
 });
 
-app.get("/getBerleyTimestamp", (req, res) => {
+app.get("/getBerkleyTimestamp", (req, res) => {
   console.log("In server 3: ", timestamp);
   res.json({
     timestamp: timeDelta + new Date().getTime(),

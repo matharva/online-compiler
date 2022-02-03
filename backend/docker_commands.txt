@@ -3,12 +3,13 @@ docker-compose up -d
 (-d to run in detached mode)
 
 ---------------------------- To get IP Address --------------------------------
-docker inspect backend-node-app-1 (whatever the name of the container is)
+docker inspect backend_node-app_1 (whatever the name of the container is)
 OR
 docker network inspect backend_default
 
 To force docker-compose to build the image (when you make changes to the files) 
 docker-compose up -d --build -V
+docker-compose up --build -V --scale node-app=3
 (-V to create new anonymous volumes)
 
 To close the app

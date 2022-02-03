@@ -41,7 +41,14 @@ function App() {
       let pollingInterval = setInterval(async () => {
         const { data: dataRes } = await axios.get(
           "http://localhost:5000/status",
-          { params: { id: data.jobId } }
+          {
+            params: { id: data.jobId },
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
+          }
         );
 
         const { success, job, error } = dataRes;
@@ -104,44 +111,46 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Online code compiler</h1>
-      <div className="">
-        <label htmlFor="">Languages:</label>
-        <select
+      <div className="container">
+        <h1>Online code compiler</h1>
+        <div className="">
+          <label htmlFor="">Languages:</label>
+          <select
+            name=""
+            id=""
+            value={language}
+            onChange={(e) => {
+              let response = window.confirm(
+                "WARNING: Changing language will remove your code. Do you wish to proceed?"
+              );
+              if (response) {
+                setLanguage(e.target.value);
+              }
+            }}
+          >
+            <option value="cpp">C++</option>
+            <option value="py">Python</option>
+          </select>
+        </div>
+        <br />
+        <button onClick={setDefaultLanguage}>Set default</button>
+        <br />
+        <br />
+        <textarea
           name=""
           id=""
-          value={language}
-          onChange={(e) => {
-            let response = window.confirm(
-              "WARNING: Changing language will remove your code. Do you wish to proceed?"
-            );
-            if (response) {
-              setLanguage(e.target.value);
-            }
-          }}
-        >
-          <option value="cpp">C++</option>
-          <option value="py">Python</option>
-        </select>
+          cols="75"
+          rows="20"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        ></textarea>
+        <br />
+        <button onClick={handleSubmit}>Submit</button>
+        <p>{output}</p>
+        <p>{renderTimeDetails()}</p>
+        <p>{status}</p>
+        <p>{jobId && `JobID: ${jobId}`}</p>
       </div>
-      <br />
-      <button onClick={setDefaultLanguage}>Set default</button>
-      <br />
-      <br />
-      <textarea
-        name=""
-        id=""
-        cols="75"
-        rows="20"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-      ></textarea>
-      <br />
-      <button onClick={handleSubmit}>Submit</button>
-      <p>{output}</p>
-      <p>{renderTimeDetails()}</p>
-      <p>{status}</p>
-      <p>{jobId && `JobID: ${jobId}`}</p>
     </div>
   );
 }

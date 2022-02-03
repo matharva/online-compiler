@@ -30,15 +30,15 @@ app.get("/central/getTimestamp", (req, res) => {
 app.get("/central/syncTime", async (req, res) => {
   try {
     let startTime1 = new Date().getTime();
-    let data1 = await axios.get("http://backend-node-app-1:5000/sendTime");
+    let data1 = await axios.get("http://backend_node-app_1:5000/sendTime");
     let RTT1 = new Date().getTime() - startTime1;
 
     let startTime2 = new Date().getTime();
-    let data2 = await axios.get("http://backend-node-app-2:5000/sendTime");
+    let data2 = await axios.get("http://backend_node-app_2:5000/sendTime");
     let RTT2 = new Date().getTime() - startTime2;
 
     let startTime3 = new Date().getTime();
-    let data3 = await axios.get("http://backend-node-app-3:5000/sendTime");
+    let data3 = await axios.get("http://backend_node-app_3:5000/sendTime");
     let RTT3 = new Date().getTime() - startTime3;
 
     let timestamp1 = new Date().getTime() - data1.data.timestamp;
@@ -47,13 +47,13 @@ app.get("/central/syncTime", async (req, res) => {
 
     let averageTime =
       (timestamp1 + timestamp2 + timestamp3) / 3 + RTT1 + RTT2 + RTT3;
-    await axios.post("http://backend-node-app-1:5000/sendTime", {
+    await axios.post("http://backend_node-app_1:5000/sendTime", {
       timestamp: averageTime,
     });
-    await axios.post("http://backend-node-app-2:5000/sendTime", {
+    await axios.post("http://backend_node-app_2:5000/sendTime", {
       timestamp: averageTime,
     });
-    await axios.post("http://backend-node-app-3:5000/sendTime", {
+    await axios.post("http://backend_node-app_3:5000/sendTime", {
       timestamp: averageTime,
     });
     console.log("The average is: ", averageTime);

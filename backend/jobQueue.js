@@ -2,9 +2,9 @@ const Queue = require("bull");
 
 const jobQueue = new Queue("job-queue", {
   redis: {
-    host: "backend-redis-1",
+    host: "backend_redis_1",
     port: 6379,
-    password: "root",
+    // password: "root",
   },
 });
 const NUM_WORKERS = 5;
@@ -20,7 +20,7 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
   if (job === undefined) {
     throw Error("Job not found");
   }
-  console.log("Fetched job", job);
+  console.log("Fetched job from queue: ", job._id);
 
   try {
     // 2. Execute code in parallel
@@ -38,7 +38,7 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     job["output"] = output;
     await job.save();
     // console.log({ filePath, output });
-    console.log(job);
+    console.log(`Output for ${job._id} is ${job.output}`);
   } catch (error) {
     // Else update the status and add the error in the DB
     job["completedAt"] = new Date();
